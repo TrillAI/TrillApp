@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Trill Transcribe</string>
+    <string name="title_activity_main">Trill Transcribe</string>
+    <string name="package_name">ai.trill.transcribe</string>
+    <string name="custom_url_scheme">ai.trill.transcribe</string>
+</resources>
