@@ -29,6 +29,7 @@ test('UI consent, save, search, cancellation, mocked recognition and delete', {t
   Object.defineProperty(w,'indexedDB',{value:indexedDB});
   w.URL.createObjectURL=()=> 'blob:https://example.test/mock'; w.URL.revokeObjectURL=()=>{};
   w.confirm=()=>true;
+  w.HTMLMediaElement.prototype.pause=function(){};
   let workers=0;
   w.Worker=class {constructor(){workers++}postMessage(){setTimeout(()=>this.onmessage?.({data:{type:'done',results:['Testing one two three']}}),10)}terminate(){}};
   w.AudioContext=class {async decodeAudioData(){return {length:4,numberOfChannels:1,sampleRate:16000,getChannelData:()=>new Float32Array(4)}} async close(){}};
