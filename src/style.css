@@ -4,3 +4,4 @@
 .splash{overflow-y:auto;padding-top:calc(30px + env(safe-area-inset-top));padding-bottom:calc(30px + env(safe-area-inset-bottom))}
 .row input{min-width:0}.toolbar .primary{width:auto}
 @media(max-width:400px){.top{height:auto;min-height:72px;gap:8px;flex-wrap:wrap;padding:12px 0}.top-actions{gap:5px}.top-actions .ghost{min-width:38px;min-height:42px}.brand{font-size:16px}.toast{white-space:normal;width:max-content;max-width:calc(100% - 32px);text-align:center}}
+.player-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px;border:1px solid #3b5146;border-radius:12px;background:#13221b}.player-bar .ghost{margin-left:auto}.live-dot{width:10px;height:10px;border-radius:50%;background:#b8f4b0;box-shadow:0 0 0 4px #b8f4b022;animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{box-shadow:0 0 0 8px #b8f4b008;opacity:.6}}.top{height:auto;min-height:88px;gap:12px;flex-wrap:wrap;padding:14px 0}.top-actions{flex-wrap:wrap}
