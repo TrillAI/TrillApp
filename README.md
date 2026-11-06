@@ -4,7 +4,7 @@ A free, ad-free transcription prototype with a responsive website and a Capacito
 
 ## Run the website
 
-Install Node.js 20 or later, then:
+Install Node.js 20.19 or later (or a recent Node.js 22), then:
 
 ```sh
 npm ci --ignore-scripts
@@ -12,7 +12,7 @@ npm run dev
 # open the address printed by Vite
 ```
 
-`npm run build` builds the static site in `dist`; serve it over HTTPS (or localhost) for browser microphone access. `npm test` runs the unit tests. Installing with `--ignore-scripts` avoids an unnecessary native ONNX runtime download; this project uses its browser WebAssembly runtime.
+`npm run build` builds the static site in `dist`; serve it over HTTPS (or localhost) for browser microphone access. `npm test` runs the utility and simulated UI tests. Installing with `--ignore-scripts` avoids an unnecessary native ONNX runtime download; this project uses its browser WebAssembly runtime.
 
 ## Branding video
 
@@ -46,4 +46,29 @@ Read the in-app terms and privacy information. They are draft text, not legal ad
 
 ## Developer notes
 
-The optional donation screen is in `src/main.js` (`donate()`); add your own legitimate link there. The save indicator is ↻. No fake cross-device sync is enabled. Permissions are deliberately minimal; no call-log or phone-call recording permissions are requested. The project currently has only unit tests for small utility functions, not end-to-end, accessibility, Android or accuracy tests.
+The optional donation screen is in `src/main.js` (`donate()`); add your own legitimate link there. The save indicator is ↻. No fake cross-device sync is enabled. Permissions are deliberately minimal; no call-log or phone-call recording permissions are requested. Automated coverage includes utility and simulated UI tests, but not real-browser, accessibility, Android or speech-accuracy tests.
+
+## Preparing a Cloudflare Tunnel test
+
+For a test of the built website (rather than the development server):
+
+```sh
+npm ci --ignore-scripts
+npm run build
+npm run preview -- --port 4173 --strictPort
+# In a second terminal, with cloudflared installed:
+cloudflared tunnel --url http://localhost:4173
+```
+
+The Vite preview server is for testing, not a hardened public production server. Quick Tunnel `*.trycloudflare.com` hosts are allowed. For a named tunnel with a custom hostname, specify the **exact hostname** when starting the server, for example `TRILL_ALLOWED_HOSTS=transcribe.example.com npm run preview -- --port 4173 --strictPort`. Multiple hostnames can be comma-separated. Host checking remains enabled; don't use an unrestricted host list. Your tunnel forwards to the local server; the site's browser code doesn't connect to `localhost` to reach a backend. Only share the link with testers you trust, and consider Cloudflare Access or another access control for non-public testing. Tunnel HTTPS is necessary for microphone access. Avoid putting sensitive recordings or credential-bearing URLs into a test session; URLs are saved locally in the browser.
+
+### Test checklist
+
+1. Open the HTTPS link on desktop and on a phone. Check layout, keyboard focus, zoom, the Continue button, and the optional branding video. Browser and app storage are separate for different origins and devices.
+2. Choose each mode and confirm its description; check the consent gate, read the terms, and start a session. Decline microphone permission once, then allow it in a compatible browser and stop listening. Check the status message. A browser's speech service may require internet and may transmit audio to its provider.
+3. Try a short, consented recording with known words. Select it, play it, transcribe it, compare results to the recording, and edit mistakes. Test a radio sample, overlapping voices, silence, and unfamiliar names/numbers. Record browser/device, sample length and observed errors. The first model download can be slow or fail if Hugging Face is blocked; subsequent use depends on browser cache.
+4. Try a direct HTTPS MP3 link whose server permits CORS, an HLS link for playback, and an inaccessible or unsupported link. Verify the error messages; HLS transcription is deliberately unsupported. Stop during download and during recognition, and confirm it doesn't continue in the background.
+5. Edit and Sync, visit Library, search, reopen, reload the page, and export. Confirm exported text matches; delete a disposable session and confirm it stays deleted. Test the seven-pass option separately and compare output; it is not evidence of accuracy.
+6. Check settings, help, donate and legal pages, narrow and landscape layouts, screen reader labels, reduced-motion preference and browser console/network errors. Repeat on actual Android devices, and test the Android wrapper independently once built. Do not use real private calls or sensitive material without permission.
+
+Automated UI tests use a simulated DOM, fake IndexedDB, and a mocked recognition worker/audio decoder. They test interface and persistence flows, **not** actual speech accuracy, audio decoding, microphone access, HLS playback, real browser rendering or Android behavior. Headless Chromium could not be run in the current sandbox because system NSS libraries are missing. Retest these with a real browser and device.
